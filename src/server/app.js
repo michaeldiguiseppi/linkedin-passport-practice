@@ -51,7 +51,7 @@ app.use(express.static(path.join(__dirname, '../client')));
 passport.use(new LinkedInStrategy({
   clientID: process.env.LINKEDIN_API_KEY,
   clientSecret: process.env.LINKEDIN_SECRET_KEY,
-  callbackURL: process.env.CALLBACK_URL_PROD,
+  callbackURL: process.env.HOST + '/auth/linkedin/callback',
   state: true,
   scope: ['r_emailaddress', 'r_basicprofile'],
 }, function(accessToken, refreshToken, profile, done) {
