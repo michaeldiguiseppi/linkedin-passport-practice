@@ -78,15 +78,6 @@ passport.use(new LinkedInStrategy({
   });
 }));
 
-/*
-table.integer('linkedin_id').unique();
-table.string('email').unique();
-table.string('preferred_name');
-table.string('last_name');
-table.text('avatar_url');
-*/
-//{ id: profile.id, givenName: profile.name.givenName, familyName: profile.name.familyName, email: profile.emails[0].value, image: profile.photos[0].value }
-
 passport.serializeUser(function(user, done) {
   //later this will be where you selectively send to the browser
   // an identifier for your user, like their primary key from the
