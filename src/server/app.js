@@ -49,10 +49,11 @@ passport.use(new LinkedInStrategy({
   clientID: process.env.LINKEDIN_API_KEY,
   clientSecret: process.env.LINKEDIN_SECRET_KEY,
   callbackURL: "http://localhost:3000/auth/linkedin/callback",
-  state: true
+  state: true,
+  scope: ['r_emailaddress', 'r_basicprofile'],
 }, function(accessToken, refreshToken, profile, done) {
   process.nextTick(function () {
-    return done(null, profile);
+    return done(null, { id: profile.id, givenName: profile.name.givenName, familyName: profile.name.familyName, email: profile.emails[0].value, image: profile.photos[0].value });
   });
 }));
 
@@ -60,7 +61,6 @@ passport.serializeUser(function(user, done) {
   //later this will be where you selectively send to the browser
   // an identifier for your user, like their primary key from the
   // database, or their ID from linkedin
-
   done(null, user);
 });
 
