@@ -47,7 +47,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, '../client')));
 
-
 passport.use(new LinkedInStrategy({
   clientID: process.env.LINKEDIN_API_KEY,
   clientSecret: process.env.LINKEDIN_SECRET_KEY,
@@ -88,7 +87,6 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(user, done) {
   // here is where you will go to the database and get the
   // user each time from it's id, after you set up your db
-  console.log(user);
   Users().where('id', user).then(function(data) {
     done(null, data);
   });
