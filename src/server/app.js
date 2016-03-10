@@ -6,10 +6,15 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var swig = require('swig');
+var cookieSession = require('cookie-session');
+var passport = require('passport');
+var LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
+if ( !process.env.NODE_ENV ) { require('dotenv').config(); }
 
 
 // *** routes *** //
 var routes = require('./routes/index.js');
+var auth = require('./routes/auth.js');
 
 
 // *** express instance *** //
@@ -31,11 +36,18 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cookieSession({
+  name: 'linkedin-oauth-session-example',
+  keys: [process.env.COOKIE_KEY1, process.env.COOKIE_KEY2]
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, '../client')));
 
 
 // *** main routes *** //
 app.use('/', routes);
+app.use('/auth', auth);
 
 
 // catch 404 and forward to error handler
