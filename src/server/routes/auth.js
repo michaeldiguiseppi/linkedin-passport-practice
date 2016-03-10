@@ -11,7 +11,8 @@ router.get('/linkedin/callback', passport.authenticate('linkedin', {
 });
 
 router.get('/logout', function(req, res, next) {
-  req.logout();
+  req.logOut();
+  req.session = null;
   res.redirect('/');
 });
 

@@ -10,7 +10,10 @@ var cookieSession = require('cookie-session');
 var passport = require('passport');
 var LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 if ( !process.env.NODE_ENV ) { require('dotenv').config(); }
-
+var knex = require('./db/knex');
+function Users () {
+  return knex('users');
+}
 
 // *** routes *** //
 var routes = require('./routes/index.js');
@@ -52,10 +55,37 @@ passport.use(new LinkedInStrategy({
   state: true,
   scope: ['r_emailaddress', 'r_basicprofile'],
 }, function(accessToken, refreshToken, profile, done) {
-  process.nextTick(function () {
-    return done(null, { id: profile.id, givenName: profile.name.givenName, familyName: profile.name.familyName, email: profile.emails[0].value, image: profile.photos[0].value });
+  Users().where('linkedin_id', profile.id).then(function(data) {
+    if (data.length) {
+      return data[0].id;
+    } else {
+      return Users().insert({
+        linkedin_id: profile.id,
+        email: profile.emails[0].value,
+        preferred_name: profile.name.givenName,
+        last_name: profile.name.familyName,
+        avatar_url: profile.photos[0].value
+      },'id').then(function(id) {
+        return id[0];
+      });
+    }
+  }).then(function(user) {
+    process.nextTick(function () {
+      return done(null, user);
+    });
+  }).catch(function(err) {
+    console.log(err);
   });
 }));
+
+/*
+table.integer('linkedin_id').unique();
+table.string('email').unique();
+table.string('preferred_name');
+table.string('last_name');
+table.text('avatar_url');
+*/
+//{ id: profile.id, givenName: profile.name.givenName, familyName: profile.name.familyName, email: profile.emails[0].value, image: profile.photos[0].value }
 
 passport.serializeUser(function(user, done) {
   //later this will be where you selectively send to the browser
@@ -67,7 +97,10 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(user, done) {
   // here is where you will go to the database and get the
   // user each time from it's id, after you set up your db
-  done(null, user);
+  console.log(user);
+  Users().where('id', user).then(function(data) {
+    done(null, data);
+  });
 });
 
 

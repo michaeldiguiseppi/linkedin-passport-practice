@@ -7,9 +7,13 @@
 
   <div class="container">
 
-    <h1>{{ title }}</h1>
-    <h3>{{ email }}</h3>
-    <img src="{{ image }}" alt="profile_image" />
+    {% if user %}
+    <h1>{{ user.preferred_name }} {{ user.last_name }}</h1>
+    <h3>{{ user.email }}</h3>
+    <img src="{{ user.avatar_url }}" alt="profile_image" />
+    {% else %}
+    <h1>Welcome!  Please log in to continue.</h1>
+    {% endif %}
 
   </div>
 
