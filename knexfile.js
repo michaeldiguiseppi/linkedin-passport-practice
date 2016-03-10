@@ -1,5 +1,4 @@
 // Update with your config settings.
-//* ID (serial) * linkedin_id column (it should be unique) * email column (it should be unique) * preferred_name * last_name * avatar_url
 
 module.exports = {
 
